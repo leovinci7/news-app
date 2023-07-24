@@ -9,13 +9,13 @@ import Foundation
 
 public struct NewsFeedModel: Equatable {
     public let id: Int
-    public let title: String?
-    public let description: String?
-    public let imageURL: String?
+    public let title: String
+    public let description: String
+    public let imageURL: String
     public let publishedDate: Int
     public let type: String?
     
-    public init(id: Int, title: String?, description: String?, imageURL: String?, publishedDate: Int, type: String?) {
+    public init(id: Int, title: String, description: String, imageURL: String, publishedDate: Int, type: String?) {
         self.id = id
         self.title = title
         self.description = description

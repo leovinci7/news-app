@@ -7,8 +7,6 @@
 
 import Foundation
 
-
-
 struct RemoteNewsFeedItem: Codable {
     let id: Int
     let title, description: String

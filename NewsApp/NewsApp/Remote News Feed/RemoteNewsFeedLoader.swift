@@ -14,6 +14,7 @@ public final class RemoteNewsFeedLoader: NewsFeedLoader {
     public enum Error: Swift.Error {
         case connectivity
         case invalidData
+        case invalidStatusCode
     }
     
     public typealias Result = NewsFeedLoader.Result
@@ -28,7 +29,7 @@ public final class RemoteNewsFeedLoader: NewsFeedLoader {
             guard self != nil else { return }
             
             switch result {
-            case let .success(data, response):
+            case let .success((data, response)):
                 completion(RemoteNewsFeedLoader.map(data, from: response))
                 
             case .failure:
@@ -49,24 +50,32 @@ public final class RemoteNewsFeedLoader: NewsFeedLoader {
 
 private extension Array where Element == RemoteNewsFeedItem {
     func toModels() -> [NewsFeedModel] {
-        return map { NewsFeedModel(id: $0.id, title: $0.title, description: $0.description, imageURL: $0.typeAttributes.imageLarge, publishedDate: $0.publishedAt, type: $0.type) }
+        return map { NewsFeedModel(id: $0.id,
+                                   title: $0.title,
+                                   description: ($0.description == "" ? $0.description : $0.typeAttributes.components?.mainContent.description ?? ""),
+                                   imageURL: $0.typeAttributes.imageLarge,
+                                   publishedDate: $0.publishedAt,
+                                   type: $0.type) }
     }
 }
 
 
 final class RemoteNewsFeedItemsMapper {
-    private struct Root: Decodable {
-        let items: [RemoteNewsFeedItem]
-    }
     
     private static var OK_200: Int { return 200 }
-    
     static func map(_ data: Data, from response: HTTPURLResponse) throws -> [RemoteNewsFeedItem] {
-        guard response.statusCode == OK_200,
-            let root = try? JSONDecoder().decode(Root.self, from: data) else {
+        guard response.statusCode == OK_200 else {
+            throw RemoteNewsFeedLoader.Error.invalidStatusCode
+        }
+        do{
+            let root = try JSONDecoder().decode([RemoteNewsFeedItem].self, from: data)
+            return root
+        }catch {
+            print("Parsing Error: \(error)")
             throw RemoteNewsFeedLoader.Error.invalidData
         }
-        return root.items
+        
     }
+    
 }
 
