@@ -11,7 +11,8 @@ public final class FeedUIComposer {
     
     public static func feedComposedWith(feedLoader: NewsFeedLoader) -> NewsFeedViewController {
         let viewModel = NewsFeedViewModel(feedLoader: feedLoader)
-        let newsFeedController = NewsFeedViewController(viewModel: viewModel)
+        let newsFeedController = NewsFeedViewController()
+        newsFeedController.viewModel = viewModel
         
         return newsFeedController
         

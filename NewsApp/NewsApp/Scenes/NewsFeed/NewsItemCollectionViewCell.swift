@@ -67,7 +67,7 @@ public class NewsItemCollectionViewCell: UICollectionViewCell {
         // Update UI components with newsItem data
         titleLabel.text = newsItem.title
         descriptionLabel.text = newsItem.description
-        publishedDateLabel.text = newsItem.publishedDate.formatted()
+        publishedDateLabel.text = Date(timeIntervalSince1970: TimeInterval(newsItem.publishedDate)).formatted()
         
         // Load image from newsItem.imageURL and set it to the imageView
         // Show the loading indicator during image loading
