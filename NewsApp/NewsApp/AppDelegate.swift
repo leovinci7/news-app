@@ -10,28 +10,10 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
-    var window: UIWindow?
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
         // Initialize the window
-        window = UIWindow(frame: UIScreen.main.bounds)
-        
-        // Create the feed loader (You need to implement the NewsFeedLoader protocol)
-        let httpClient = URLSessionHTTPClient()
-        let newsURL = APIConstants.newsURL
-        let newsFeedLoader = RemoteNewsFeedLoader(url:newsURL , client: httpClient)
-        
-        // Create the NewsFeedViewController using FeedUIComposer
-        let newsFeedController = FeedUIComposer.feedComposedWith(feedLoader: newsFeedLoader)
-        
-        // Set the NewsFeedViewController as the root view controller
-        window?.rootViewController = newsFeedController
-        
-        // Make the window visible
-        window?.makeKeyAndVisible()
-        
-        return true
+          return true
     }
     
     // MARK: UISceneSession Lifecycle

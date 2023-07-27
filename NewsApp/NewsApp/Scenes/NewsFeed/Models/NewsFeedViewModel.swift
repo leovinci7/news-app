@@ -12,11 +12,11 @@ final class NewsFeedViewModel {
     typealias Observer<T> = (T) -> Void
     
     private let feedLoader: NewsFeedLoader
-    var newsFeed:[NewsFeedModel]
+   // var newsFeed:[NewsFeedModel]
     
     init(feedLoader: NewsFeedLoader) {
         self.feedLoader = feedLoader
-        self.newsFeed = []
+       // self.newsFeed = []
     }
     
     var onFeedLoad: Observer<[NewsFeedModel]>?
@@ -26,8 +26,7 @@ final class NewsFeedViewModel {
         feedLoader.load(completion: { [weak self] result in
             if let feed = try? result.get(){
                 self?.onFeedLoad?(feed)
-                self?.newsFeed = feed
-            }
+            } 
         })
     }
     

@@ -10,13 +10,27 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
-
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+        
+        //window = UIWindow(frame: UIScreen.main.bounds)
+        window = UIWindow(windowScene: windowScene)
+        
+        // Create the feed loader (You need to implement the NewsFeedLoader protocol)
+        let httpClient = URLSessionHTTPClient()
+        let newsURL = APIConstants.newsURL
+        let newsFeedLoader = RemoteNewsFeedLoader(url: newsURL, client: httpClient)
+        // Create the NewsFeedViewController using FeedUIComposer
+        let newsFeedController = FeedUIComposer.feedComposedWith(feedLoader: newsFeedLoader)
+        
+        // Set the NewsFeedViewController as the root view controller
+        window?.rootViewController = newsFeedController
+        
+        // Make the window visible
+        window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

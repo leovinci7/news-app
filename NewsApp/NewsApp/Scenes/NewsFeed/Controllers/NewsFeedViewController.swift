@@ -8,36 +8,49 @@
 import UIKit
 import SDWebImage
 
-public class NewsFeedViewController: UIViewController, UICollectionViewDelegate {
+public class NewsFeedViewController: UIViewController{
     
     var viewModel: NewsFeedViewModel? = nil
     private var newsFeed:[NewsFeedModel] = []
-    
-//    init(viewModel: NewsFeedViewModel) {
-//        self.viewModel = viewModel
-//        super.init(nibName: nil, bundle: nil)
-//    }
-//
-//    required init?(coder aCoder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
     
     var collectionView: UICollectionView!
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        setUPCollectionView()
-        self.viewModel?.onFeedLoad = {[weak self] feed in
-            print(feed)
-            DispatchQueue.main.async {
-                       self?.collectionView.reloadData()
-                   }
-        }
-      //  self.viewModel?.loadFeed()
+        self.setUPCollectionView()
         
-        self.newsFeed = DummyData.getDummyNewsFeedData()
+        self.viewModel?.onFeedLoad = {[weak self] feed in
+            DispatchQueue.main.async {
+                self?.newsFeed = feed
+                self?.collectionView.reloadData()
+                }
+        }
+        
+      
+        self.viewModel?.loadFeed() ?? {
+            //show or print error
+            print("Viewmodel not initialized")
+        }()
+        
+       // performDelayedTask()
     }
     
+}
+
+extension NewsFeedViewController:UICollectionViewDelegate, UICollectionViewDataSource {
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.newsFeed.count
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NewsItemCell", for: indexPath) as! NewsItemCollectionViewCell
+        let newsItem = self.newsFeed[indexPath.item]
+        cell.configure(with: newsItem)
+        return cell
+    }
+}
+
+extension NewsFeedViewController {
     
     private func setUPCollectionView(){
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createTwoColumnLayout())
@@ -77,19 +90,15 @@ public class NewsFeedViewController: UIViewController, UICollectionViewDelegate 
         let layout = UICollectionViewCompositionalLayout(section: section)
         return layout
     }
-}
-
-extension NewsFeedViewController: UICollectionViewDataSource {
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.newsFeed.count
+    
+    func performDelayedTask() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+        // This code block will be executed after a 10-second delay
+            print("Delayed task completed!")
+            self.collectionView.reloadData()
+        }
     }
     
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NewsItemCell", for: indexPath) as! NewsItemCollectionViewCell
-        let newsItem = self.newsFeed[indexPath.item]
-        cell.configure(with: newsItem)
-        return cell
-    }
 }
 
 
