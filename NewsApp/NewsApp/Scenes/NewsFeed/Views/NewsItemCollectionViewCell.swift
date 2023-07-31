@@ -31,12 +31,19 @@ public class NewsItemCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(descriptionLabel)
         contentView.addSubview(publishedDateLabel)
         
+        //Item style:
+        titleLabel.numberOfLines = 2
+        // Add corner radius to the imageView
+        imageView.layer.cornerRadius = 10 // You can adjust the value to your desired corner radius
+        imageView.clipsToBounds = true // Make sure to enable clipping so the corners are visible
+        
         // Configure constraints for the UI components (labels, imageView)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         publishedDateLabel.translatesAutoresizingMaskIntoConstraints = false
-        
+       
+               
         // Set up vertical constraints for the labels
         NSLayoutConstraint.activate([
             
@@ -59,16 +66,16 @@ public class NewsItemCollectionViewCell: UICollectionViewCell {
             publishedDateLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 4),
             publishedDateLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             publishedDateLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            publishedDateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
+            publishedDateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
         ])
+        
     }
     
-    func configure(with newsItem: NewsFeedModel) {
+    func configure(with newsItem: NewsFeedViewData) {
         // Update UI components with newsItem data
         titleLabel.text = newsItem.title
         descriptionLabel.text = newsItem.description
-        publishedDateLabel.text = Date(timeIntervalSince1970: TimeInterval(newsItem.publishedDate)).formatted()
-        
+        publishedDateLabel.text = newsItem.publishedDate
         // Load image from newsItem.imageURL and set it to the imageView
         // Show the loading indicator during image loading
         imageView.sd_imageIndicator = SDWebImageActivityIndicator.gray

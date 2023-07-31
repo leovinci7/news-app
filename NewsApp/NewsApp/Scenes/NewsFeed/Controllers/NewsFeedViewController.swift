@@ -11,32 +11,37 @@ import SDWebImage
 public class NewsFeedViewController: UIViewController{
     
     var viewModel: NewsFeedViewModel? = nil
-    private var newsFeed:[NewsFeedModel] = []
+    private var newsFeed:[NewsFeedViewData] = []
     
     var collectionView: UICollectionView!
+    var refreshControl: UIRefreshControl!
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.setUPCollectionView()
+        self.setupRefreshControl()
+
         
         self.viewModel?.onFeedLoad = {[weak self] feed in
-            DispatchQueue.main.async {
-                self?.newsFeed = feed
+            self?.newsFeed = feed
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                self?.refreshControl.endRefreshing()
                 self?.collectionView.reloadData()
+                print("reloading collectionview")
                 }
         }
         
-      
         self.viewModel?.loadFeed() ?? {
             //show or print error
             print("Viewmodel not initialized")
         }()
         
-       // performDelayedTask()
     }
     
 }
 
+
+//MARK: - CollectionView Delegate and Data Source
 extension NewsFeedViewController:UICollectionViewDelegate, UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.newsFeed.count
@@ -50,6 +55,7 @@ extension NewsFeedViewController:UICollectionViewDelegate, UICollectionViewDataS
     }
 }
 
+//MARK: - CollectionView SetUP
 extension NewsFeedViewController {
     
     private func setUPCollectionView(){
@@ -67,11 +73,10 @@ extension NewsFeedViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-        
-    }
+}
     
     private func createTwoColumnLayout() -> UICollectionViewCompositionalLayout {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.50), heightDimension: .estimated(200))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.50), heightDimension: .fractionalWidth(0.50))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
         item.edgeSpacing = NSCollectionLayoutEdgeSpacing(leading: .fixed(0), top: .fixed(8), trailing: .fixed(0), bottom: .fixed(8))
@@ -83,22 +88,26 @@ extension NewsFeedViewController {
         
         let section = NSCollectionLayoutSection(group: group)
         
-         let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(44))
-         let header = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
-          section.boundarySupplementaryItems = [header]
-        
         let layout = UICollectionViewCompositionalLayout(section: section)
         return layout
     }
+}
+
+
+//MARK: extension for refresh control
+extension NewsFeedViewController {
     
-    func performDelayedTask() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-        // This code block will be executed after a 10-second delay
-            print("Delayed task completed!")
-            self.collectionView.reloadData()
-        }
+    func setupRefreshControl() {
+        refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        collectionView.refreshControl = refreshControl
     }
     
+    @objc func refreshData(){
+        self.viewModel?.loadFeed() ?? {
+            print("viewModel is not initialized")
+        }()
+    }
 }
 
 
