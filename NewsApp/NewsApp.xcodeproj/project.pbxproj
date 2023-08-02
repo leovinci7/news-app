@@ -32,6 +32,7 @@
 		05CF122B2A6F10FD00747DDC /* APIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05CF122A2A6F10FD00747DDC /* APIConstants.swift */; };
 		05CF122E2A6F2BF900747DDC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05CF122C2A6F2BF900747DDC /* Main.storyboard */; };
 		05CF12702A771D8500747DDC /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 05CF126F2A771D8500747DDC /* SDWebImage */; };
+		05DC74932A7875150082112E /* AlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DC74922A7875150082112E /* AlertViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +80,7 @@
 		057088FD2A6E6F6500FA5C31 /* NewsItemCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsItemCollectionViewCell.swift; sourceTree = "<group>"; };
 		05CF122A2A6F10FD00747DDC /* APIConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConstants.swift; sourceTree = "<group>"; };
 		05CF122D2A6F2BF900747DDC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = NewsApp/Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		05DC74922A7875150082112E /* AlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -197,6 +199,7 @@
 		057088F52A6E4A7200FA5C31 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				05DC74912A7874940082112E /* ViewHelper */,
 				057088FA2A6E6CA600FA5C31 /* Composer */,
 				057088F72A6E4E1B00FA5C31 /* NewsDetail */,
 				057088F62A6E4E0C00FA5C31 /* NewsFeed */,
@@ -259,6 +262,14 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		05DC74912A7874940082112E /* ViewHelper */ = {
+			isa = PBXGroup;
+			children = (
+				05DC74922A7875150082112E /* AlertViewController.swift */,
+			);
+			path = ViewHelper;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -414,6 +425,7 @@
 				051AF7AD2A63207D0089809C /* NewsFeedModel.swift in Sources */,
 				051AF7A92A631FB00089809C /* NewsFeedLoader.swift in Sources */,
 				057088F42A6E49F800FA5C31 /* DummyData.swift in Sources */,
+				05DC74932A7875150082112E /* AlertViewController.swift in Sources */,
 				057088EF2A6DD1BE00FA5C31 /* NewsFeedViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -30,6 +30,16 @@ public class NewsFeedViewController: UIViewController{
                 print("reloading collectionview")
                 }
         }
+        self.viewModel?.onFeedLoadError = {[weak self] errorMsg in
+            DispatchQueue.main.async{
+                if let currentViewController = self {
+                    AlertViewController.showAlert(in: currentViewController, title: "Error", message: errorMsg){
+                        self?.refreshControl.endRefreshing()
+                    }
+                }
+               
+            }
+        }
         
         self.viewModel?.loadFeed() ?? {
             //show or print error

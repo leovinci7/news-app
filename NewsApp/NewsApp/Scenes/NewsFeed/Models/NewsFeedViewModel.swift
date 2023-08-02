@@ -26,12 +26,27 @@ final class NewsFeedViewModel {
     }
     
     var onFeedLoad: Observer<[NewsFeedViewData]>?
-    var onFeedLoadError: Observer<Error>?
+    var onFeedLoadError: Observer<String>?
     
     func loadFeed(){
         feedLoader.load(completion: { [weak self] result in
-            if let feed = try? result.get(){
-                self?.onFeedLoad?(feed.toModels())
+            do {
+                let feed = try result.get()
+                self?.onFeedLoad?(feed.toViewData())
+            }catch {
+                var errorMsg = ""
+                switch error as? RemoteNewsFeedLoader.Error {
+                case .connectivity:
+                    errorMsg = "Connection Error"
+                case .invalidData:
+                    errorMsg = "Invalid Data"
+                case .invalidStatusCode:
+                    errorMsg = "Request Error"
+                default:
+                    errorMsg = "Unknown Error"
+                }
+                
+                self?.onFeedLoadError?(errorMsg)
             }
         })
     }
@@ -42,12 +57,14 @@ final class NewsFeedViewModel {
 
 
 private extension Array where Element == NewsFeedModel {
-    func toModels() -> [NewsFeedViewData] {
-        return map { NewsFeedViewData(title: $0.title,
-                                      description: $0.description,
-                                      imageURL: $0.imageURL,
-                                      publishedDate: self.getFormattedDateFrom(Integer: $0.publishedDate),
-                                      type: $0.type) }
+    func toViewData() -> [NewsFeedViewData] {
+        let sortedModels = self.sorted(by: {$0.publishedDate > $1.publishedDate})
+        return sortedModels.map { NewsFeedViewData(title: $0.title,
+                                                   description: $0.description,
+                                                   imageURL: $0.imageURL,
+                                                   publishedDate: self.getFormattedDateFrom(Integer: $0.publishedDate),
+                                                   type: $0.type) }
+        
     }
     
     func getFormattedDateFrom(Integer intDate:Int) -> String {

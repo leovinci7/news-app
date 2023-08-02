@@ -31,13 +31,17 @@ public class NewsItemCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(descriptionLabel)
         contentView.addSubview(publishedDateLabel)
         
-        //Item style:
+        //MARK: Item Styling
         titleLabel.numberOfLines = 2
+        titleLabel.font = UIFont.boldSystemFont(ofSize: titleLabel.font.pointSize - 2)
         // Add corner radius to the imageView
         imageView.layer.cornerRadius = 10 // You can adjust the value to your desired corner radius
         imageView.clipsToBounds = true // Make sure to enable clipping so the corners are visible
+        publishedDateLabel.font = UIFont.systemFont(ofSize: 10)
+        publishedDateLabel.textColor = UIColor.lightGray
         
-        // Configure constraints for the UI components (labels, imageView)
+        
+        //MARK: Configure constraints for the UI components (labels, imageView)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false

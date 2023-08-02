@@ -11,7 +11,11 @@ public class URLSessionHTTPClient: HTTPClient {
     private let session: URLSession
     
     public init(session: URLSession = .shared) {
-        self.session = session
+         self.session = session
+//        // Create a custom URLCache with zero memory capacity and set it as the URLCache for the URLSession configuration
+//        let configuration = URLSessionConfiguration.default
+//        configuration.urlCache = URLCache(memoryCapacity: 0, diskCapacity: 0, diskPath: nil)
+//        self.session = URLSession(configuration: configuration)
     }
     
     private struct UnexpectedValuesRepresentation: Error {}
