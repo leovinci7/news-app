@@ -7,7 +7,11 @@
 
 import Foundation
 
-struct NewsFeedViewData {
+struct NewsViewData{
+    public let feed:[NewsFeed]
+    public let types:[String]
+}
+struct NewsFeed {
     public let title: String
     public let description: String
     public let imageURL: String
@@ -25,14 +29,17 @@ final class NewsFeedViewModel {
         self.feedLoader = feedLoader
     }
     
-    var onFeedLoad: Observer<[NewsFeedViewData]>?
+    var onFeedLoad: Observer<NewsViewData>?
     var onFeedLoadError: Observer<String>?
     
     func loadFeed(){
         feedLoader.load(completion: { [weak self] result in
             do {
                 let feed = try result.get()
-                self?.onFeedLoad?(feed.toViewData())
+                let types = self?.getUniqueTypes(from: feed) ?? [String]()
+                let newsFeedViewData = NewsViewData(feed: feed.toNewsFeed(), types: types)
+                self?.onFeedLoad?(newsFeedViewData)
+                
             }catch {
                 var errorMsg = ""
                 switch error as? RemoteNewsFeedLoader.Error {
@@ -52,19 +59,29 @@ final class NewsFeedViewModel {
     }
     
     
+    private func getUniqueTypes(from newsFeed: [NewsFeedModel]) -> [String] {
+        var uniqueTypes = Set<String>()
+        for feed in newsFeed {
+            if let type = feed.type {
+                uniqueTypes.insert(type)
+            }
+        }
+        return Array(uniqueTypes)
+    }
+    
+    
 }
 
 
 
 private extension Array where Element == NewsFeedModel {
-    func toViewData() -> [NewsFeedViewData] {
+    func toNewsFeed() -> [NewsFeed] {
         let sortedModels = self.sorted(by: {$0.publishedDate > $1.publishedDate})
-        return sortedModels.map { NewsFeedViewData(title: $0.title,
-                                                   description: $0.description,
-                                                   imageURL: $0.imageURL,
-                                                   publishedDate: self.getFormattedDateFrom(Integer: $0.publishedDate),
-                                                   type: $0.type) }
-        
+        return sortedModels.map { NewsFeed(title: $0.title,
+                                           description: $0.description,
+                                           imageURL: $0.imageURL,
+                                           publishedDate: self.getFormattedDateFrom(Integer: $0.publishedDate),
+                                           type: $0.type) }
     }
     
     func getFormattedDateFrom(Integer intDate:Int) -> String {

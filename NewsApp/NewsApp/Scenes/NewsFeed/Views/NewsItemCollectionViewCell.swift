@@ -75,7 +75,7 @@ public class NewsItemCollectionViewCell: UICollectionViewCell {
         
     }
     
-    func configure(with newsItem: NewsFeedViewData) {
+    func configure(with newsItem: NewsFeed) {
         // Update UI components with newsItem data
         titleLabel.text = newsItem.title
         descriptionLabel.text = newsItem.description
