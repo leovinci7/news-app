@@ -8,7 +8,8 @@
 import Foundation
 
 struct NewsViewData{
-    public let feed:[NewsFeed]
+    public var feed:[NewsFeed]
+    public let loadedFeed:[NewsFeed]
     public let types:[String]
 }
 struct NewsFeed {
@@ -29,7 +30,9 @@ final class NewsFeedViewModel {
         self.feedLoader = feedLoader
     }
     
-    var onFeedLoad: Observer<NewsViewData>?
+    var data:NewsViewData = NewsViewData(feed: [], loadedFeed: [], types: [])
+    //var onFeedLoad: Observer<NewsViewData>?
+    var onFeedLoad: (() -> Void)?
     var onFeedLoadError: Observer<String>?
     
     func loadFeed(){
@@ -37,8 +40,9 @@ final class NewsFeedViewModel {
             do {
                 let feed = try result.get()
                 let types = self?.getUniqueTypes(from: feed) ?? [String]()
-                let newsFeedViewData = NewsViewData(feed: feed.toNewsFeed(), types: types)
-                self?.onFeedLoad?(newsFeedViewData)
+                let newsFeed = feed.toNewsFeed()
+                self?.data = NewsViewData(feed: newsFeed, loadedFeed:newsFeed, types: types)
+                self?.onFeedLoad?()
                 
             }catch {
                 var errorMsg = ""
@@ -68,7 +72,11 @@ final class NewsFeedViewModel {
         }
         return Array(uniqueTypes)
     }
+   
     
+    func filterBy(Type type:String){
+        data.feed = data.loadedFeed.filter { $0.type == type }
+    }
     
 }
 
