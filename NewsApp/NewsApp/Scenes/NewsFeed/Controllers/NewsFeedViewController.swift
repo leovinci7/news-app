@@ -20,22 +20,14 @@ public class NewsFeedViewController: UIViewController{
         super.viewDidLoad()
         //title = "CBC News"
         self.view.backgroundColor = .white
-        // Register for trait collection changes to detect size class changes
-        NotificationCenter.default.addObserver(self, selector: #selector(MyTraitCollectionDidChange(_:)), name: NSNotification.Name("MyTraitCollectionDidChangeNotification"), object: nil)
         // Initial setup based on current size class
         updateUI(for: traitCollection)
         handleLoadFeed()
     }
-    
-    @objc private func MyTraitCollectionDidChange(_ notification: NSNotification) {
-        if let traitCollection = notification.object as? UITraitCollection {
-            updateUI(for: traitCollection)
-        }
-    }
-    
+
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        NotificationCenter.default.post(name: NSNotification.Name("MyTraitCollectionDidChangeNotification"), object: self.traitCollection)
+        updateUI(for: traitCollection)
     }
     
     // Update the UI based on the given size class
