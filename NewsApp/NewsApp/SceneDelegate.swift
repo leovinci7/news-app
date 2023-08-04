@@ -25,9 +25,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let newsFeedLoader = RemoteNewsFeedLoader(url: newsURL, client: httpClient)
         // Create the NewsFeedViewController using FeedUIComposer
         let newsFeedController = FeedUIComposer.feedComposedWith(feedLoader: newsFeedLoader)
-        
+        let navController = UINavigationController(rootViewController: newsFeedController)
+        navController.title = "ATN News"
         // Set the NewsFeedViewController as the root view controller
-        window?.rootViewController = newsFeedController
+        window?.rootViewController =  navController
         
         // Make the window visible
         window?.makeKeyAndVisible()

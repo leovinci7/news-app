@@ -18,9 +18,10 @@ public class NewsFeedViewController: UIViewController{
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        //title = "CBC News"
         self.view.backgroundColor = .white
         // Register for trait collection changes to detect size class changes
-        NotificationCenter.default.addObserver(self, selector: #selector(traitCollectionDidChange(_:)), name: NSNotification.Name("MyTraitCollectionDidChangeNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(MyTraitCollectionDidChange(_:)), name: NSNotification.Name("MyTraitCollectionDidChangeNotification"), object: nil)
         // Initial setup based on current size class
         updateUI(for: traitCollection)
         handleLoadFeed()
@@ -32,13 +33,22 @@ public class NewsFeedViewController: UIViewController{
         }
     }
     
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        NotificationCenter.default.post(name: NSNotification.Name("MyTraitCollectionDidChangeNotification"), object: self.traitCollection)
+    }
+    
     // Update the UI based on the given size class
     private func updateUI(for traitCollection: UITraitCollection) {
         if traitCollection.horizontalSizeClass == .compact && traitCollection.verticalSizeClass == .regular {
             handleCompactWidthRegularHeight()
         } else if traitCollection.horizontalSizeClass == .regular && traitCollection.verticalSizeClass == .regular {
             handleRegularWidthRegularHeight()
-        } else {
+        }else if traitCollection.horizontalSizeClass == .compact && traitCollection.verticalSizeClass == .compact {
+            handleCompactWidthCompactHeight()
+        }
+        
+        else {
             // Default method for other size classes
             handleDefaultSizeClass()
         }
@@ -51,6 +61,12 @@ public class NewsFeedViewController: UIViewController{
     }
     
     private func handleRegularWidthRegularHeight(){
+        self.setUpSegmentControlView()
+        self.setUPCollectionViewWith(Column: .twoColumn)
+        self.setupRefreshControl()
+    }
+    
+    private func handleCompactWidthCompactHeight(){
         self.setUpSegmentControlView()
         self.setUPCollectionViewWith(Column: .twoColumn)
         self.setupRefreshControl()
