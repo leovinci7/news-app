@@ -1,113 +1,87 @@
-//
-//  NewsDetailViewController.swift
-//  NewsApp
-//  Created by Medhad Ashraf Islam on 13/8/23.
-//
-
 import UIKit
 import SDWebImage
 
-class NewsDetailViewController:UIViewController{
+class NewsDetailViewController: UIViewController {
     
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
     private let imageView = UIImageView()
-    private let titleLabel = UILabel()
-    private let publishedDateLabel = UILabel()
+    private let descriptionLabel = UILabel()
+    private let dateLabel = UILabel()
     
-    var viewModel:NewsDetailViewModel? = nil
+    var viewModel: NewsDetailViewModel? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .white
-        self.setUpDetailViewLayout()
-        self.setUpDetailViewData()
-        
+        setupUI()
+        setupData()
     }
-}
-
-
-extension NewsDetailViewController {
     
-    private func setUpDetailViewLayout(){
-        // Add two content views to the cell
-        let imageViewContentView = UIView()
-        let labelsContentView = UIView()
-        let stackView = UIStackView(arrangedSubviews: [imageViewContentView, labelsContentView])
-        stackView.axis = .vertical
-        view.addSubview(stackView)
+    private func setupUI() {
+        view.backgroundColor = .white
         
-        // Add the image view to the imageViewContentView
-        imageViewContentView.addSubview(imageView)
-        // Add the labels to the labelsContentView
-        labelsContentView.addSubview(titleLabel)
-        labelsContentView.addSubview(publishedDateLabel)
-       
-        //MARK: Item Styling
-        stackView.spacing = 4
-        titleLabel.numberOfLines = 2
-        titleLabel.font = UIFont.boldSystemFont(ofSize: titleLabel.font.pointSize - 2)
-        // Add corner radius to the imageView
-        imageView.layer.cornerRadius = 10 // You can adjust the value to your desired corner radius
-        imageView.clipsToBounds = true // Make sure to enable clipping so the corners are visible
-        publishedDateLabel.font = UIFont.systemFont(ofSize: 12)
-        publishedDateLabel.textColor = UIColor.darkGray
+        // Add scrollView to the view
+        view.addSubview(scrollView)
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
-        //MARK: Configure constraints for the UI components (labels, imageView)
+        // Add contentView to the scrollView
+        scrollView.addSubview(contentView)
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+        contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
+        contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
+        contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
+        contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
+        
+        // Add image view to contentView
+        contentView.addSubview(imageView)
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        publishedDateLabel.translatesAutoresizingMaskIntoConstraints = false
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16).isActive = true
+        imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16).isActive = true
+        imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16).isActive = true
+        imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: 9.0 / 16.0).isActive = true // Maintain 16:9 aspect ratio
+       // imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true //
+        // Set content mode to fill and clip to bounds to maintain aspect ratio and crop
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+
         
-        NSLayoutConstraint.activate([
-            
-            //Stack View Constraint
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-           // stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -5),
-            labelsContentView.heightAnchor.constraint(equalTo: stackView.heightAnchor, multiplier: 1.0/5.0),
-            
-            //Image View constraints
-            imageView.topAnchor.constraint(equalTo: imageViewContentView.topAnchor, constant: 8),
-            imageView.leadingAnchor.constraint(equalTo: imageViewContentView.leadingAnchor, constant: 8),
-            imageView.trailingAnchor.constraint(equalTo: imageViewContentView.trailingAnchor, constant: -8),
-            imageView.bottomAnchor.constraint(equalTo: imageViewContentView.bottomAnchor, constant: -8),
-            
-            // Title Label constraints
-            titleLabel.topAnchor.constraint(equalTo: labelsContentView.topAnchor, constant: 8),
-            titleLabel.leadingAnchor.constraint(equalTo: labelsContentView.leadingAnchor, constant: 8),
-            titleLabel.trailingAnchor.constraint(equalTo: labelsContentView.trailingAnchor, constant: -8),
-            
-            // Published Date Label constraints
-            publishedDateLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
-            publishedDateLabel.leadingAnchor.constraint(equalTo: labelsContentView.leadingAnchor, constant: 8),
-            publishedDateLabel.trailingAnchor.constraint(equalTo: labelsContentView.trailingAnchor, constant: -8),
-        ])
+        // Add description label to contentView
+        contentView.addSubview(descriptionLabel)
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        descriptionLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 16).isActive = true
+        descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16).isActive = true
+        descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16).isActive = true
         
+        // Add date label to contentView
+        contentView.addSubview(dateLabel)
+        dateLabel.translatesAutoresizingMaskIntoConstraints = false
+        dateLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8).isActive = true
+        dateLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16).isActive = true
+        dateLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16).isActive = true
+        dateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16).isActive = true
+        
+        // Set up label properties
+        descriptionLabel.numberOfLines = 0
+        dateLabel.font = UIFont.systemFont(ofSize: 12)
+        dateLabel.textColor = UIColor.darkGray
     }
     
-    private func setUpDetailViewData(){
+    private func setupData() {
         guard let newsData = self.viewModel?.data else {
             return
         }
-        // Update UI components with newsItem data
-        titleLabel.text = newsData.description
-        publishedDateLabel.text = newsData.publishedDate
-        // Load image from newsItem.imageURL and set it to the imageView
-        // Show the loading indicator during image loading
-        imageView.sd_imageIndicator = SDWebImageActivityIndicator.gray
-        // imageView.sd_setImage(with: newsItem.imageURL, placeholderImage: UIImage(named: "placeholderImage"))
-        // Refresh the cache for a specific URL
+        
+        descriptionLabel.text = newsData.description
+        dateLabel.text = newsData.publishedDate
+        
         if let url = URL(string: newsData.imageURL) {
-            // Remove the cached image from the memory and disk
-            SDImageCache.shared.removeImage(forKey: url.absoluteString, withCompletion: {
-                // Image cache removed, now reload the image from the URL
-                self.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholderImage"))
-            })
+            imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholderImage"))
         }
-        
     }
-        
 }
-    
-    
 

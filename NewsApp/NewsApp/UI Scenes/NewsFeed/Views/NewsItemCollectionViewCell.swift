@@ -47,6 +47,7 @@ public class NewsItemCollectionViewCell: UICollectionViewCell {
         titleLabel.font = UIFont.boldSystemFont(ofSize: titleLabel.font.pointSize - 2)
         // Add corner radius to the imageView
         imageView.layer.cornerRadius = 10 // You can adjust the value to your desired corner radius
+        imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true // Make sure to enable clipping so the corners are visible
         publishedDateLabel.font = UIFont.systemFont(ofSize: 12)
         publishedDateLabel.textColor = UIColor.darkGray
@@ -71,6 +72,7 @@ public class NewsItemCollectionViewCell: UICollectionViewCell {
             imageView.leadingAnchor.constraint(equalTo: imageViewContentView.leadingAnchor, constant: 8),
             imageView.trailingAnchor.constraint(equalTo: imageViewContentView.trailingAnchor, constant: -8),
             imageView.bottomAnchor.constraint(equalTo: imageViewContentView.bottomAnchor, constant: -8),
+            
             
             // Title Label constraints
             titleLabel.topAnchor.constraint(equalTo: labelsContentView.topAnchor, constant: 8),
