@@ -52,7 +52,7 @@ private extension Array where Element == RemoteNewsFeedItem {
     func toModels() -> [NewsFeedModel] {
         return map { NewsFeedModel(id: $0.id,
                                    title: $0.title,
-                                   description: ($0.description == "" ? $0.description : $0.typeAttributes.components?.mainContent.description ?? ""),
+                                   description: ($0.description != "" ? $0.description : $0.typeAttributes.components?.mainContent.description ?? ""),
                                    imageURL: $0.typeAttributes.imageLarge,
                                    publishedDate: $0.publishedAt,
                                    type: ($0.type != "contentpackage" ? $0.type : $0.typeAttributes.components?.mainContent.type )) }

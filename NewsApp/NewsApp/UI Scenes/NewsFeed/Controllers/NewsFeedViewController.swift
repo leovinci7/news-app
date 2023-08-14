@@ -16,6 +16,8 @@ public class NewsFeedViewController: UIViewController{
     var collectionView: UICollectionView!
     var refreshControl: UIRefreshControl!
     
+    var showNewsDetail: ((_ newsDetal:NewsFeed) -> Void)?
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         //title = "CBC News"
@@ -87,10 +89,8 @@ public class NewsFeedViewController: UIViewController{
                         self?.refreshControl.endRefreshing()
                     }
                 }
-                
             }
         }
-        
         self.viewModel?.loadFeed() ?? {
             print("Viewmodel not initialized")
         }()
@@ -111,6 +111,12 @@ extension NewsFeedViewController:UICollectionViewDelegate, UICollectionViewDataS
         cell.configure(with: newsItem)
         return cell
     }
+    
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let news = self.viewModel?.data.feed[indexPath.item]
+        self.showNewsDetail?(news!)
+    }
+
 }
 
 
